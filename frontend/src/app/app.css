@@ -1,0 +1,35 @@
+.navbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  background-color: #343a40;
+  padding: 12px 20px;
+}
+
+.navbar a {
+  color: #cccccc;
+  text-decoration: none;
+  margin-right: 20px;
+}
+
+.navbar a:hover,
+.navbar a.active {
+  color: #ffffff;
+}
+
+.navbar .brand {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: bold;
+  margin-right: 30px;
+}
+
+.navbar .model {
+  margin-left: auto;
+  color: #bbbbbb;
+  font-size: 13px;
+}
+
+.navbar .down {
+  color: #ff8080;
+}

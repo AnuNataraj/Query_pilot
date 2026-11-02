@@ -1,0 +1,43 @@
+.form-box {
+  background-color: #f8f9fa;
+  border: 1px solid #dddddd;
+  padding: 15px 20px;
+  max-width: 650px;
+}
+
+.form-box h4 {
+  margin-top: 0;
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+}
+
+.buttons {
+  display: flex;
+  gap: 8px;
+}
+
+td.content {
+  white-space: pre-wrap;
+  font-size: 13px;
+}
+
+td.actions {
+  white-space: nowrap;
+}
+
+td.actions button {
+  margin-right: 5px;
+}

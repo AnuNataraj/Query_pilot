@@ -1,0 +1,77 @@
+<h2>Knowledge Base</h2>
+<p>
+  Before writing SQL, the AI searches these entries and uses the ones that match the question.
+  Add your business rules here, for example how "revenue" or a "VIP customer" is defined.
+</p>
+
+<div class="form-box">
+  <h4>{{ editingId ? 'Edit Entry' : 'Add New Entry' }}</h4>
+
+  <form (ngSubmit)="save()">
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" [(ngModel)]="form.title" />
+    </div>
+
+    <div class="form-group">
+      <label for="kind">Type</label>
+      <select id="kind" name="kind" [(ngModel)]="form.kind">
+        @for (t of types; track t.value) {
+          <option [value]="t.value">{{ t.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="content">Content</label>
+      <textarea id="content" name="content" rows="5" [(ngModel)]="form.content"></textarea>
+    </div>
+
+    <div class="buttons">
+      <button type="submit">{{ editingId ? 'Update' : 'Save' }}</button>
+      @if (editingId) {
+        <button type="button" class="secondary" (click)="resetForm()">Cancel</button>
+      } @else {
+        <button type="button" class="secondary" (click)="fillExample()">Fill VIP Example</button>
+      }
+    </div>
+  </form>
+
+  @if (message()) {
+    <p class="success">{{ message() }}</p>
+  }
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+</div>
+
+<h3>All Entries ({{ docs().length }})</h3>
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Type</th>
+        <th>Content</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (doc of docs(); track doc.id) {
+        <tr>
+          <td>{{ doc.title }}</td>
+          <td>{{ typeLabel(doc.kind) }}</td>
+          <td class="content">{{ doc.content }}</td>
+          <td class="actions">
+            <button class="small" (click)="edit(doc)">Edit</button>
+            <button class="small danger" (click)="remove(doc)">Delete</button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="4">No entries yet.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

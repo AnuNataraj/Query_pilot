@@ -1,0 +1,56 @@
+.input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.input-row input {
+  flex: 1;
+  font-size: 15px;
+}
+
+.follow-up {
+  display: block;
+  margin-top: 10px;
+  color: #555555;
+}
+
+.samples {
+  margin-top: 20px;
+}
+
+.samples li {
+  margin: 4px 0;
+}
+
+.loading {
+  color: #555555;
+  font-style: italic;
+}
+
+.insight {
+  font-size: 16px;
+}
+
+.warning {
+  background-color: #fff3cd;
+  border: 1px solid #ffe08a;
+  padding: 8px;
+}
+
+.meta,
+.hint {
+  color: #777777;
+  font-size: 13px;
+}
+
+.buttons {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.plan {
+  background-color: #f8f8f8;
+  border: 1px solid #dddddd;
+  padding: 10px 10px 10px 30px;
+}

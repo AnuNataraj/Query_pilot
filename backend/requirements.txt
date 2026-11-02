@@ -1,0 +1,6 @@
+Django>=5.2,<5.3
+djangorestframework>=3.16,<4
+requests>=2.32
+python-dotenv>=1.0
+pytest>=8
+pytest-django>=4.9

@@ -1,0 +1,18 @@
+<nav class="navbar">
+  <a class="brand" routerLink="/">QueryPilot</a>
+  <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Ask</a>
+  <a routerLink="/knowledge" routerLinkActive="active">Knowledge Base</a>
+  <a routerLink="/history" routerLinkActive="active">History</a>
+
+  <span class="model">
+    @if (backendDown()) {
+      <span class="down">Backend not running</span>
+    } @else if (modelName()) {
+      Model: {{ modelName() }}
+    }
+  </span>
+</nav>
+
+<div class="container">
+  <router-outlet />
+</div>

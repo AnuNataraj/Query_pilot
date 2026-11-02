@@ -1,0 +1,157 @@
+<h2>Ask a Question</h2>
+<p>Ask a question about the sales data in plain English. The AI will write a SQL query, run it and explain the result.</p>
+
+<form class="ask-form" (ngSubmit)="ask()">
+  <div class="input-row">
+    <input type="text" name="question" [(ngModel)]="question"
+           placeholder="Example: What is the refund rate by sales channel?" />
+    <button type="submit" [disabled]="loading()">Ask</button>
+  </div>
+
+  @if (lastAnswered) {
+    <label class="follow-up">
+      <input type="checkbox" name="followUp" [(ngModel)]="followUp" />
+      Follow-up to the previous question: "{{ lastAnswered.question }}"
+    </label>
+  }
+</form>
+
+@if (!result() && !loading() && suggestions().length > 0) {
+  <div class="samples">
+    <strong>Sample questions:</strong>
+    <ul>
+      @for (s of suggestions(); track s) {
+        <li><a href="#" (click)="askSample(s); $event.preventDefault()">{{ s }}</a></li>
+      }
+    </ul>
+  </div>
+}
+
+@if (loading()) {
+  <p class="loading">Working on it... the AI is writing and running the query.</p>
+}
+
+@if (error()) {
+  <p class="error">{{ error() }}</p>
+}
+
+@if (result(); as r) {
+  <h3>Answer</h3>
+  @if (r.status === 'answered') {
+    <p class="insight">{{ r.insight }}</p>
+    @if (r.assumptions.length > 0) {
+      <p class="warning">
+        Note: the AI assumed {{ r.assumptions.join(' ') }}
+        You can add a rule for this on the Knowledge Base page.
+      </p>
+    }
+    <p class="meta">
+      Rows: {{ r.row_count }} | Query time: {{ r.elapsed_ms }} ms
+      @if (!sqlEdited()) {
+        | Total time: {{ r.latency_ms }} ms | Attempts: {{ r.attempts }}
+      } @else {
+        | (ran your edited SQL)
+      }
+    </p>
+  } @else {
+    <p class="error">{{ statusMessage(r.status) }} {{ r.error }}</p>
+  }
+
+  @if (r.chart.type === 'bar' || r.chart.type === 'line') {
+    <app-result-chart [columns]="r.columns" [rows]="r.rows" [chart]="r.chart"></app-result-chart>
+  }
+
+  @if (r.columns.length > 0) {
+    <h3>Data</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            @for (col of r.columns; track $index) {
+              <th>{{ col }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of r.rows; track $index) {
+            <tr>
+              @for (cell of row; track $index) {
+                <td [class.number]="isNumber(cell)">
+                  {{ isNumber(cell) ? (cell | number: '1.0-2') : cell }}
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (r.sql) {
+    <h3>SQL Query</h3>
+    <p class="hint">You can edit the query and run it again. Only SELECT queries are allowed.</p>
+    <textarea class="code" name="sql" rows="10" [(ngModel)]="sql"></textarea>
+    <div class="buttons">
+      <button type="button" (click)="runSql()">Run SQL</button>
+      <button type="button" class="secondary" (click)="explainSql()">Show Query Plan</button>
+    </div>
+    @if (sqlError()) {
+      <p class="error">{{ sqlError() }}</p>
+    }
+    @if (plan().length > 0) {
+      <h4>Query Plan</h4>
+      <ul class="plan code">
+        @for (p of plan(); track p.id) {
+          <li>{{ p.detail }}</li>
+        }
+      </ul>
+      <p class="hint">SEARCH means an index is used. SCAN means the whole table is read.</p>
+    }
+  }
+
+  <h3>Steps</h3>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Step</th>
+          <th>Status</th>
+          <th>Time</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (step of r.steps; track step.id) {
+          <tr>
+            <td>{{ step.label }}</td>
+            <td [class.success]="step.status === 'done'" [class.error]="step.status === 'error'">
+              {{ step.status === 'done' ? 'OK' : 'Failed' }}
+            </td>
+            <td>{{ step.ms }} ms</td>
+            <td>{{ stepDetails(step) }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Knowledge Used</h3>
+  @if (r.context.length > 0) {
+    <ul>
+      @for (doc of r.context; track doc.id) {
+        <li>{{ doc.title }} (score: {{ doc.score | number: '1.2-2' }})</li>
+      }
+    </ul>
+  } @else {
+    <p>No knowledge base entries matched this question.</p>
+  }
+
+  @if (r.follow_ups.length > 0) {
+    <h3>Suggested Questions</h3>
+    <ul>
+      @for (q of r.follow_ups; track q) {
+        <li><a href="#" (click)="askSample(q); $event.preventDefault()">{{ q }}</a></li>
+      }
+    </ul>
+  }
+}

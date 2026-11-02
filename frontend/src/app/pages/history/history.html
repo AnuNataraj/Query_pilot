@@ -1,0 +1,39 @@
+<h2>Query History</h2>
+<p>The last 30 questions asked.</p>
+
+@if (error()) {
+  <p class="error">{{ error() }}</p>
+}
+
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Question</th>
+        <th>Status</th>
+        <th>Rows</th>
+        <th>Time (ms)</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of items(); track item.id) {
+        <tr>
+          <td class="nowrap">{{ item.created_at | date: 'short' }}</td>
+          <td>{{ item.question }}</td>
+          <td [class.success]="item.status === 'answered'" [class.error]="item.status !== 'answered'">
+            {{ item.status }}
+          </td>
+          <td>{{ item.row_count ?? '-' }}</td>
+          <td>{{ item.latency_ms }}</td>
+          <td class="nowrap"><a routerLink="/" [queryParams]="{ q: item.question }">Ask again</a></td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="6">No questions asked yet.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
